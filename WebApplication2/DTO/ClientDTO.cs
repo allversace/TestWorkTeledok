@@ -1,4 +1,6 @@
-﻿namespace WebApplication2.DTO;
+﻿using WebApplication2.Data;
+
+namespace WebApplication2.DTO;
 
 public class ClientDTO
 {
@@ -7,4 +9,5 @@ public class ClientDTO
     public string Type { get; set; }
     public DateTime DateAdded { get; set; } = DateTime.UtcNow;
     public DateTime DateUpdated { get; set; } = DateTime.UtcNow;
+    
 }

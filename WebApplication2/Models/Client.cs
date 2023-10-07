@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApplication2.DTO;
 
 namespace WebApplication2.Models
 {
@@ -22,5 +23,29 @@ namespace WebApplication2.Models
 
         [InverseProperty("Client")]
         public virtual ICollection<Founder> Founder { get; set; }
+        
+        public ClientDTO ToClientDPO()
+        {
+            return new ClientDTO
+            {
+                INN_client = this.INN_client,
+                Name = this.Name,
+                Type = this.Type,
+                DateAdded = this.DateAdded,
+                DateUpdated = this.DateUpdated
+            };
+        }
+        
+        public static Client FromClient(ClientDTO dto)
+        {
+            return new Client
+            {
+                INN_client = dto.INN_client,
+                Name = dto.Name,
+                Type = dto.Type,
+                DateAdded = dto.DateAdded,
+                DateUpdated = dto.DateUpdated
+            };
+        }
     }
 }

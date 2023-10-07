@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication2.Data;
 using WebApplication2.DTO;
+using WebApplication2.Models;
 
 namespace WebApplication2.Controllers
 {
@@ -16,20 +17,28 @@ namespace WebApplication2.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClientDTO>>> GetClients()
+        [Route("GetClients")]
+        public ActionResult<IEnumerable<ClientDTO>> GetClients()
         {
-            return await _context.ClientDTO.ToListAsync();
+            var clients = _context.Client.ToList();
+            var clientDtos = clients.Select(client => client.ToClientDPO()).ToList();
+            return Ok(clientDtos);
         }
-
+        
         [HttpPost]
-        public async Task<ActionResult<ClientDTO>> AddClient(ClientDTO newClient)
+        [Route("CreateClient")]
+        public IActionResult CreateClient([FromBody] ClientDTO createClientDto)
         {
-            newClient.DateAdded = DateTime.UtcNow;
-            newClient.DateUpdated = DateTime.UtcNow;
-            _context.ClientDTO.Add(newClient);
-            await _context.SaveChangesAsync();
+            if (createClientDto == null)
+            {
+                return BadRequest("Invalid client data");
+            }
 
-            return Ok(newClient);
+            var client = Client.FromClient(createClientDto);
+            _context.Client.Add(client);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(GetClients), new { id = client.INN_client }, client.ToClientDPO());
         }
     }
 }
