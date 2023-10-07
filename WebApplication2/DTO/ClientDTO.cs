@@ -1,6 +1,6 @@
 ﻿namespace WebApplication2.DTO;
 
-public class ClientAPI
+public class ClientDTO
 {
     public int INN_client { get; set; }
     public string Name { get; set; }
