@@ -29,6 +29,7 @@ namespace WebApplication2.Models
         [ForeignKey("Client")]
         public int INN_client { get; set; }
 
+        //сделать еще одну модель
         public virtual Client Client { get; set; }
 
     }

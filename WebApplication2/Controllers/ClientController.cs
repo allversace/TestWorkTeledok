@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebApplication2.Data;
-using WebApplication2.Models;
+using WebApplication2.Services;
 
 namespace WebApplication2.Controllers
 {
@@ -9,27 +7,20 @@ namespace WebApplication2.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private TeledokDataContext _context;
+        private readonly ClientService _clientService;
 
-        public ClientController(TeledokDataContext context)
+        public ClientController(ClientService clientService)
         {
-            _context = context;
+            _clientService = clientService;
         }
 
         [HttpGet]
-        [Route("GetClient")]
-        public async Task<IEnumerable<Client>> GetClients()
+        [Route("GetClients")]
+        public IActionResult GetAllClients()
         {
-            return await _context.Client.ToListAsync();
-        }
-
-        [HttpPost]
-        [Route("AddClient")]
-        public async Task<Client> AddClient(Client client)
-        {
-            _context.Client.Add(client);
-            await _context.SaveChangesAsync();
-            return client;
+            var clients = _clientService.GetAllClients();
+            var clientAPIs = clients.Select(_clientService.GetClientAPI).ToList();
+            return Ok(clientAPIs);
         }
     }
 }
