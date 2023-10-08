@@ -3,42 +3,41 @@ using WebApplication2.Data;
 using WebApplication2.DTO;
 using WebApplication2.Models;
 
-namespace WebApplication2.Controllers
+namespace WebApplication2.Controllers;
+
+[Route("api/Client")]
+[ApiController]
+public class ClientController : ControllerBase
 {
-    [Route("api/Client")]
-    [ApiController]
-    public class ClientController : ControllerBase
+    private readonly TeledokDataContext _context;
+
+    public ClientController(TeledokDataContext context)
     {
-        private readonly TeledokDataContext _context;
+        _context = context;
+    }
 
-        public ClientController(TeledokDataContext context)
+    [HttpGet]
+    [Route("GetClients")]
+    public ActionResult<IEnumerable<ClientDTO>> GetClients()
+    {
+        var clients = _context.Client.ToList();
+        var clientDtos = clients.Select(client => client.ToClientDPO()).ToList();
+        return Ok(clientDtos);
+    }
+
+    [HttpPost]
+    [Route("CreateClient")]
+    public IActionResult CreateClient([FromBody] ClientDTO createClientDto)
+    {
+        if (createClientDto == null)
         {
-            _context = context;
+            return BadRequest("Invalid client data");
         }
 
-        [HttpGet]
-        [Route("GetClients")]
-        public ActionResult<IEnumerable<ClientDTO>> GetClients()
-        {
-            var clients = _context.Client.ToList();
-            var clientDtos = clients.Select(client => client.ToClientDPO()).ToList();
-            return Ok(clientDtos);
-        }
-        
-        [HttpPost]
-        [Route("CreateClient")]
-        public IActionResult CreateClient([FromBody] ClientDTO createClientDto)
-        {
-            if (createClientDto == null)
-            {
-                return BadRequest("Invalid client data");
-            }
+        var client = Client.FromClient(createClientDto);
+        _context.Client.Add(client);
+        _context.SaveChanges();
 
-            var client = Client.FromClient(createClientDto);
-            _context.Client.Add(client);
-            _context.SaveChanges();
-
-            return CreatedAtAction(nameof(GetClients), new { id = client.INN_client }, client.ToClientDPO());
-        }
+        return CreatedAtAction(nameof(GetClients), new { id = client.INN_client }, client.ToClientDPO());
     }
 }

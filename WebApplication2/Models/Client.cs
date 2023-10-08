@@ -28,11 +28,11 @@ namespace WebApplication2.Models
         {
             return new ClientDTO
             {
-                INN_client = this.INN_client,
-                Name = this.Name,
-                Type = this.Type,
-                DateAdded = this.DateAdded,
-                DateUpdated = this.DateUpdated
+                INN_client = INN_client,
+                Name = Name,
+                Type = Type,
+                DateAdded = DateAdded,
+                DateUpdated = DateUpdated
             };
         }
         
